@@ -714,6 +714,17 @@
                 </div>
             </div>
         </div>
+        <div v-else-if="authorized" class="history-section">
+            <div class="history-header">
+                <h2>Ваши графики</h2>
+            </div>
+            <div class="history-grid">
+                <div class="history-item card" style="cursor: default;">
+                    <div class="history-item-title">Сохранённых графиков пока нет</div>
+                    <div class="history-item-meta">Создайте новый график, чтобы сохранить его для быстрого доступа.</div>
+                </div>
+            </div>
+        </div>
 
         <!-- Results -->
         <div v-if="result" class="results-section">
@@ -918,17 +929,21 @@
                         });
 
                         if (!response.ok) {
+                            if (response.status === 401 || response.status === 403) {
+                                this.logout();
+                            }
                             this.scheduleHistory = [];
                             return;
                         }
 
-                        this.scheduleHistory = await response.json();
-                    } catch {
+                        this.scheduleHistory = await response.json() || [];
+                    } catch (error) {
+                        console.error('Ошибка загрузки истории:', error);
                         this.scheduleHistory = [];
                     }
                 },
                 loadHistoryItem(item) {
-                    this.result = item.chart;
+                    this.result = item.chart || item;
                 },
                 formatDate(value) {
                     return new Date(value).toLocaleString('ru-RU', {
