@@ -6,6 +6,9 @@ public class ShiftScheduleResponse
     public List<MonthData> Months { get; set; } = new();
     public int TotalWorkCount { get; set; }
     public int TotalHours { get; set; }
+    public string? ShiftPattern { get; set; } // JSON: ["day", "night", "off"]
+    public string? DayHours { get; set; }
+    public string? NightHours { get; set; }
 }
 
 public class MonthData
@@ -21,4 +24,5 @@ public class DayData
 {
     public int Day { get; set; }
     public string Status { get; set; } = string.Empty; // "work", "off", "empty"
+    public string? ShiftType { get; set; } // "day", "night", null for off days
 }

@@ -13,4 +13,7 @@ public class ShiftSchedule
     public bool NightFirst { get; set; }
     public string CalendarJson { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
+    public string? ShiftPattern { get; set; } // JSON array: ["day", "night", "off"]
+    public string? DayHours { get; set; } = "08:00-20:00"; // Часы дневной смены
+    public string? NightHours { get; set; } = "20:00-08:00"; // Часы ночной смены
 }

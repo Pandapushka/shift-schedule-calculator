@@ -19,14 +19,22 @@ public class ShiftScheduleService : IShiftScheduleService
         var scheduleId = Guid.NewGuid();
         var title = string.IsNullOrWhiteSpace(request.Title) ? scheduleId.ToString() : request.Title;
 
+        // Если нет кастомного паттерна, создаём стандартный (все дневные смены)
+        var shiftPattern = request.ShiftPattern?.Any() == true 
+            ? request.ShiftPattern 
+            : Enumerable.Range(0, request.WorkDays).Select(_ => "day").Concat(
+                  Enumerable.Range(0, request.OffDays).Select(_ => "off")).ToList();
+
         var response = new ShiftScheduleResponse
         {
-            Title = title
+            Title = title,
+            ShiftPattern = JsonSerializer.Serialize(shiftPattern),
+            DayHours = request.DayHours,
+            NightHours = request.NightHours
         };
 
         var currentDate = request.StartDate;
-        var cycleLength = request.WorkDays + request.OffDays;
-        var isWorkDay = true;
+        var cycleLength = shiftPattern.Count;
         var cycleIndex = 0;
 
         for (int month = 0; month < request.Months; month++)
@@ -42,41 +50,31 @@ public class ShiftScheduleService : IShiftScheduleService
 
             for (int day = 1; day <= daysInMonth; day++)
             {
-                var status = "empty";
+                var dayData = new DayData { Day = day, Status = "empty", ShiftType = null };
+
                 if (currentDate.Day == day && currentDate.Month == monthData.Month && currentDate.Year == monthData.Year)
                 {
-                    if (isWorkDay)
+                    var shiftTypeInCycle = shiftPattern[cycleIndex % cycleLength];
+
+                    if (shiftTypeInCycle == "off")
                     {
-                        status = "work";
+                        dayData.Status = "off";
+                    }
+                    else
+                    {
+                        dayData.Status = "work";
+                        dayData.ShiftType = shiftTypeInCycle; // "day" или "night"
                         monthData.WorkCount++;
                         monthData.HoursCount += request.HoursPerShift;
                         response.TotalWorkCount++;
                         response.TotalHours += request.HoursPerShift;
                     }
-                    else
-                    {
-                        status = "off";
-                    }
 
                     cycleIndex++;
-                    if (cycleIndex >= cycleLength)
-                    {
-                        cycleIndex = 0;
-                        isWorkDay = !isWorkDay;
-                    }
-                    else if (cycleIndex < request.WorkDays)
-                    {
-                        isWorkDay = true;
-                    }
-                    else
-                    {
-                        isWorkDay = false;
-                    }
-
                     currentDate = currentDate.AddDays(1);
                 }
 
-                monthData.Days.Add(new DayData { Day = day, Status = status });
+                monthData.Days.Add(dayData);
             }
 
             response.Months.Add(monthData);
@@ -95,6 +93,9 @@ public class ShiftScheduleService : IShiftScheduleService
                 HoursPerShift = request.HoursPerShift,
                 Months = request.Months,
                 NightFirst = request.NightFirst,
+                ShiftPattern = JsonSerializer.Serialize(shiftPattern),
+                DayHours = request.DayHours,
+                NightHours = request.NightHours,
                 CalendarJson = JsonSerializer.Serialize(response),
                 CreatedAt = DateTime.UtcNow
             };

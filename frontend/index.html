@@ -456,11 +456,22 @@
             background: #dcfce7;
             color: #166534;
             font-weight: 600;
+            position: relative;
         }
 
         [data-theme="dark"] .calendar-table td.work {
             background: #166534;
             color: #dcfce7;
+        }
+
+        .calendar-table td.work.night {
+            background: #2d3b7e;
+            color: #b8c5ff;
+        }
+
+        [data-theme="dark"] .calendar-table td.work.night {
+            background: #1e2757;
+            color: #7d9eff;
         }
 
         .calendar-table td.off {
@@ -471,6 +482,16 @@
         [data-theme="dark"] .calendar-table td.off {
             background: #991b1b;
             color: #fef2f2;
+        }
+
+        .shift-badge {
+            position: absolute;
+            top: 0.25rem;
+            right: 0.25rem;
+            font-size: 0.65rem;
+            padding: 0.125rem 0.25rem;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
         }
 
         .calendar-summary {
@@ -673,17 +694,22 @@
                     <div class="accordion-content" :class="{ open: advancedOpen }">
                         <div class="form-grid">
                             <div class="form-group">
-                                <label class="form-label">Тип смены</label>
-                                <select class="form-input" v-model="form.shiftType">
-                                    <option value="standard">Стандартная</option>
-                                    <option value="rotating">Суточная</option>
-                                    <option value="custom">Пользовательская</option>
-                                </select>
+                                <label class="form-label">Время дневной смены</label>
+                                <input class="form-input" type="text" v-model="form.dayHours" placeholder="08:00-20:00">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Перерывы (минуты)</label>
-                                <input class="form-input" type="number" v-model.number="form.breakMinutes" min="0" max="120">
+                                <label class="form-label">Время ночной смены</label>
+                                <input class="form-input" type="text" v-model="form.nightHours" placeholder="20:00-08:00">
                             </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 1.5rem;">
+                            <label class="form-label">Конфигурация смен (опционально)</label>
+                            <small style="display: block; color: var(--text-light); margin-bottom: 0.5rem;">
+                                Укажите типы смен через запятую: день, ночь, выходной (или day, night, off).<br>
+                                Пример для "день-ночь 2 дома": день, ночь, выходной, выходной<br>
+                                Если не указано, все смены будут дневными.
+                            </small>
+                            <input class="form-input" type="text" v-model="shiftPatternInput" placeholder="день, ночь, выходной, выходной">
                         </div>
                     </div>
                 </div>
@@ -746,8 +772,10 @@
                         </thead>
                         <tbody>
                             <tr v-for="week in getWeeks(month)" :key="week[0].day + '-' + month.month">
-                                <td v-for="day in week" :key="day.day + '-' + month.month" :class="day.status">
+                                <td v-for="day in week" :key="day.day + '-' + month.month" :class="[day.status, { night: day.shiftType === 'night' }]">
                                     {{ day.day }}
+                                    <span v-if="day.shiftType === 'night'" class="shift-badge">🌙</span>
+                                    <span v-else-if="day.shiftType === 'day'" class="shift-badge">☀️</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -781,7 +809,10 @@
                         nightFirst: false,
                         title: '',
                         shiftType: 'standard',
-                        breakMinutes: 0
+                        breakMinutes: 0,
+                        dayHours: '08:00-20:00',
+                        nightHours: '20:00-08:00',
+                        shiftPattern: null // Например: ["day", "night", "off"]
                     },
                     authForm: {
                         email: '',
@@ -795,7 +826,8 @@
                     scheduleHistory: [],
                     result: null,
                     loading: false,
-                    advancedOpen: false
+                    advancedOpen: false,
+                    shiftPatternInput: '' // Для UI ввода паттерна
                 }
             },
             computed: {
@@ -830,10 +862,25 @@
                             headers.Authorization = `Bearer ${this.authToken}`;
                         }
 
+                        // Парсим паттерн смен, если указан
+                        const requestData = { ...this.form };
+                        if (this.shiftPatternInput.trim()) {
+                            requestData.shiftPattern = this.shiftPatternInput
+                                .split(',')
+                                .map(s => {
+                                    const lower = s.trim().toLowerCase();
+                                    if (lower === 'день' || lower === 'day') return 'day';
+                                    if (lower === 'ночь' || lower === 'night') return 'night';
+                                    if (lower === 'выходной' || lower === 'off') return 'off';
+                                    return lower;
+                                })
+                                .filter(s => ['day', 'night', 'off'].includes(s));
+                        }
+
                         const response = await fetch('http://localhost:5000/api/shiftschedule/calculate', {
                             method: 'POST',
                             headers,
-                            body: JSON.stringify(this.form)
+                            body: JSON.stringify(requestData)
                         });
 
                         if (!response.ok) {

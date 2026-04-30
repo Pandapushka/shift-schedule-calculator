@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор графика смен</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #2c2c2c;
+            background-image: 
+                radial-gradient(circle at 25% 25%, #3a3a3a 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, #1a1a1a 0%, transparent 50%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #f5f5f5;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            letter-spacing: 2px;
+        }
+
+        .form-container {
+            background: #1a1a1a;
+            background-image: linear-gradient(45deg, #1a1a1a 25%, transparent 25%), 
+                              linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), 
+                              linear-gradient(45deg, transparent 75%, #1a1a1a 75%), 
+                              linear-gradient(-45deg, transparent 75%, #1a1a1a 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            border: 3px solid #444;
+            border-radius: 0;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.05);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #ccc;
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input[type="date"],
+        input[type="number"],
+        input[type="text"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #555;
+            border-radius: 0;
+            font-size: 1rem;
+            background: #2a2a2a;
+            color: #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #888;
+            box-shadow: 0 0 10px rgba(136,136,136,0.3);
+            background: #333;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #888;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #555 0%, #333 100%);
+            color: #e0e0e0;
+            border: 2px solid #777;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Oswald', sans-serif;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #666 0%, #444 100%);
+            border-color: #999;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-small {
+            width: auto;
+            padding: 0.7rem 1rem;
+            font-size: 0.95rem;
+        }
+
+        .btn.outline {
+            background: transparent;
+            color: #ddd;
+            border-color: #888;
+        }
+
+        .top-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .subtitle {
+            color: #bbb;
+            margin: 0.4rem 0 0;
+            max-width: 720px;
+            line-height: 1.5;
+        }
+
+        .user-panel {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .user-badge {
+            padding: 0.8rem 1rem;
+            border: 2px solid #555;
+            color: #e0e0e0;
+            background: rgba(255,255,255,0.03);
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        .auth-panel {
+            background: rgba(30,30,30,0.95);
+            border: 2px solid #555;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-panel h2 {
+            margin-top: 0;
+            color: #f5f5f5;
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .auth-toggle {
+            margin-top: 1rem;
+            color: #bbb;
+        }
+
+        .auth-toggle a {
+            color: #eee;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .auth-message {
+            margin-top: 1rem;
+            color: #8fd7b5;
+        }
+
+        .history-container {
+            background: #1a1a1a;
+            border: 2px solid #555;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .history-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .history-card {
+            background: #252525;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .history-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #f3f3f3;
+        }
+
+        .history-meta {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .result-container {
+            background: #1a1a1a;
+            background-image: linear-gradient(45deg, #1a1a1a 25%, transparent 25%), 
+                              linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), 
+                              linear-gradient(45deg, transparent 75%, #1a1a1a 75%), 
+                              linear-gradient(-45deg, transparent 75%, #1a1a1a 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            border: 3px solid #444;
+            border-radius: 0;
+            padding: 2rem;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.05);
+        }
+
+        .result-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: #f5f5f5;
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .calendars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .calendar {
+            background: #2a2a2a;
+            border: 2px solid #555;
+            border-radius: 0;
+            padding: 1rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .calendar-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #e0e0e0;
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .calendar table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #333;
+            border-radius: 0;
+            overflow: hidden;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .calendar th {
+            background: #444;
+            color: #f5f5f5;
+            padding: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Oswald', sans-serif;
+            border: 1px solid #555;
+        }
+
+        .calendar td {
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #555;
+            transition: all 0.2s ease;
+            color: #e0e0e0;
+        }
+
+        .calendar td.work {
+            background: #4a4a4a;
+            color: #fff;
+            font-weight: 700;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .calendar td.off {
+            background: #2a2a2a;
+            color: #aaa;
+        }
+
+        .calendar td.empty {
+            background: transparent;
+            border: none;
+        }
+
+        .calendar td:hover:not(.empty) {
+            background: #555;
+            transform: scale(1.05);
+        }
+
+        .month-summary {
+            text-align: center;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 0;
+            font-weight: 500;
+            color: #e0e0e0;
+        }
+
+        .total-summary {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #444 0%, #222 100%);
+            color: #f5f5f5;
+            border: 2px solid #666;
+            border-radius: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .form-container,
+            .result-container {
+                padding: 1.5rem;
+            }
+
+            .calendar {
+                padding: 1rem;
+            }
+
+            .calendar th,
+            .calendar td {
+                padding: 0.5rem;
+            }
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(224,224,224,.3);
+            border-radius: 50%;
+            border-top-color: #e0e0e0;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <div class="top-panel">
+                <div>
+                    <h1>Калькулятор графика смен</h1>
+                    <p class="subtitle">Создавайте сменные графики сразу или сохраняйте их в своем аккаунте.</p>
+                </div>
+                <div class="user-panel">
+                    <template v-if="authorized">
+                        <div class="user-badge">Авторизован: {{ userEmail }}</div>
+                        <button type="button" class="btn btn-small outline" @click="logout">Выйти</button>
+                    </template>
+                    <template v-else>
+                        <button type="button" class="btn btn-small" @click="showAuth = 'login'">Войти</button>
+                        <button type="button" class="btn btn-small outline" @click="showAuth = 'register'">Регистрация</button>
+                    </template>
+                </div>
+            </div>
+
+            <div v-if="showAuth" class="auth-panel">
+                <h2>{{ showAuth === 'login' ? 'Вход' : 'Регистрация' }}</h2>
+                <form @submit.prevent="showAuth === 'login' ? login() : register()">
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="text" v-model="authForm.email" placeholder="example@mail.ru" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Пароль:</label>
+                        <input type="password" v-model="authForm.password" required>
+                    </div>
+                    <button type="submit" class="btn" :disabled="authLoading">
+                        <span v-if="authLoading" class="spinner"></span>
+                        {{ authLoading ? 'Подождите...' : (showAuth === 'login' ? 'Войти' : 'Зарегистрироваться') }}
+                    </button>
+                </form>
+                <p class="auth-toggle">
+                    <template v-if="showAuth === 'login'">
+                        Нет аккаунта? <a href="#" @click.prevent="showAuth = 'register'">Зарегистрироваться</a>
+                    </template>
+                    <template v-else>
+                        Уже есть аккаунт? <a href="#" @click.prevent="showAuth = 'login'">Войти</a>
+                    </template>
+                </p>
+                <p v-if="authMessage" class="auth-message">{{ authMessage }}</p>
+            </div>
+
+            <div class="form-container">
+                <form @submit.prevent="calculate">
+                    <div class="form-group">
+                        <label>Дата первого рабочего дня:</label>
+                        <input type="date" v-model="form.startDate" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Рабочих дней:</label>
+                            <input type="number" v-model.number="form.workDays" min="1" max="7" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Выходных дней:</label>
+                            <input type="number" v-model.number="form.offDays" min="1" max="7" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Часов в смене:</label>
+                        <input type="number" v-model.number="form.hoursPerShift" min="1" max="24" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Месяцев для расчета:</label>
+                        <input type="number" v-model.number="form.months" min="1" max="24" required>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" v-model="form.nightFirst" id="nightFirst">
+                        <label for="nightFirst">Первая смена - ночь</label>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Название графика:</label>
+                        <input type="text" v-model="form.title" placeholder="Необязательно">
+                    </div>
+
+                    <button type="submit" class="btn" :disabled="loading">
+                        <span v-if="loading" class="spinner"></span>
+                        {{ loading ? 'Расчет...' : 'Рассчитать график' }}
+                    </button>
+                </form>
+            </div>
+
+            <div v-if="authorized && scheduleHistory.length" class="history-container">
+                <h2>Последние графики</h2>
+                <div class="history-grid">
+                    <div v-for="item in scheduleHistory" :key="item.id" class="history-card">
+                        <div class="history-title">{{ item.title }}</div>
+                        <div class="history-meta">{{ formatDate(item.createdAt) }}</div>
+                        <button type="button" class="btn btn-small outline" @click="loadHistoryItem(item)">Показать</button>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="result" class="result-container">
+                <h2 class="result-title">{{ result.title || 'График смен' }}</h2>
+
+                <div class="calendars-grid">
+                    <div v-for="month in result.months" :key="month.year + '-' + month.month" class="calendar">
+                        <h3 class="calendar-title">{{ getMonthName(month.month) }} {{ month.year }}</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Пн</th><th>Вт</th><th>Ср</th><th>Чт</th><th>Пт</th><th>Сб</th><th>Вс</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="week in getWeeks(month)" :key="week[0].day + '-' + month.month">
+                                    <td v-for="day in week" :key="day.day + '-' + month.month" :class="day.status">
+                                        {{ day.day }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="month-summary">
+                            Смен в этом месяце: <strong>{{ month.workCount }}</strong><br>
+                            Всего часов: <strong>{{ month.hoursCount }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="total-summary">
+                    Итого: {{ result.totalWorkCount }} смен, {{ result.totalHours }} часов
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    form: {
+                        startDate: '2026-01-01',
+                        workDays: 2,
+                        offDays: 2,
+                        hoursPerShift: 11,
+                        months: 1,
+                        nightFirst: false,
+                        title: ''
+                    },
+                    authForm: {
+                        email: '',
+                        password: ''
+                    },
+                    authToken: '',
+                    userEmail: '',
+                    showAuth: '',
+                    authLoading: false,
+                    authMessage: '',
+                    scheduleHistory: [],
+                    result: null,
+                    loading: false
+                }
+            },
+            computed: {
+                authorized() {
+                    return !!this.authToken;
+                }
+            },
+            mounted() {
+                this.authToken = localStorage.getItem('shiftcalc_token') || '';
+                this.userEmail = localStorage.getItem('shiftcalc_email') || '';
+                if (this.authToken) {
+                    this.fetchHistory();
+                }
+            },
+            methods: {
+                async calculate() {
+                    this.loading = true;
+                    this.authMessage = '';
+
+                    try {
+                        const headers = {
+                            'Content-Type': 'application/json'
+                        };
+
+                        if (this.authToken) {
+                            headers.Authorization = `Bearer ${this.authToken}`;
+                        }
+
+                        const response = await fetch('http://localhost:5000/api/shiftschedule/calculate', {
+                            method: 'POST',
+                            headers,
+                            body: JSON.stringify(this.form)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Ошибка при расчете');
+                        }
+
+                        this.result = await response.json();
+
+                        if (this.authorized) {
+                            await this.fetchHistory();
+                        }
+                    } catch (error) {
+                        alert('Ошибка: ' + error.message);
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+                async register() {
+                    this.authLoading = true;
+                    this.authMessage = '';
+
+                    try {
+                        const response = await fetch('http://localhost:5000/api/auth/register', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(this.authForm)
+                        });
+
+                        if (!response.ok) {
+                            const body = await response.text();
+                            throw new Error(body || 'Ошибка регистрации');
+                        }
+
+                        this.authMessage = 'Регистрация прошла успешно. Войдите в аккаунт.';
+                        this.showAuth = 'login';
+                    } catch (error) {
+                        this.authMessage = error.message;
+                    } finally {
+                        this.authLoading = false;
+                    }
+                },
+                async login() {
+                    this.authLoading = true;
+                    this.authMessage = '';
+
+                    try {
+                        const response = await fetch('http://localhost:5000/api/auth/login', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(this.authForm)
+                        });
+
+                        if (!response.ok) {
+                            const body = await response.text();
+                            throw new Error(body || 'Ошибка входа');
+                        }
+
+                        const data = await response.json();
+                        this.authToken = data.token;
+                        this.userEmail = this.authForm.email;
+                        localStorage.setItem('shiftcalc_token', this.authToken);
+                        localStorage.setItem('shiftcalc_email', this.userEmail);
+                        this.showAuth = '';
+                        this.authForm.password = '';
+                        await this.fetchHistory();
+                    } catch (error) {
+                        this.authMessage = error.message;
+                    } finally {
+                        this.authLoading = false;
+                    }
+                },
+                logout() {
+                    this.authToken = '';
+                    this.userEmail = '';
+                    this.scheduleHistory = [];
+                    localStorage.removeItem('shiftcalc_token');
+                    localStorage.removeItem('shiftcalc_email');
+                },
+                async fetchHistory() {
+                    if (!this.authToken) {
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch('http://localhost:5000/api/shiftschedule/history', {
+                            headers: {
+                                Authorization: `Bearer ${this.authToken}`
+                            }
+                        });
+
+                        if (!response.ok) {
+                            this.scheduleHistory = [];
+                            return;
+                        }
+
+                        this.scheduleHistory = await response.json();
+                    } catch {
+                        this.scheduleHistory = [];
+                    }
+                },
+                loadHistoryItem(item) {
+                    this.result = item.chart;
+                },
+                formatDate(value) {
+                    return new Date(value).toLocaleString('ru-RU', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                },
+                getMonthName(month) {
+                    const names = [
+                        'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                        'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+                    ];
+                    return names[month - 1];
+                },
+                getWeeks(month) {
+                    const days = month.days;
+                    const weeks = [];
+                    let week = [];
+                    const firstDay = new Date(month.year, month.month - 1, 1).getDay();
+                    const startOffset = firstDay === 0 ? 6 : firstDay - 1;
+
+                    for (let i = 0; i < startOffset; i++) {
+                        week.push({ day: '', status: 'empty' });
+                    }
+
+                    days.forEach(day => {
+                        week.push(day);
+                        if (week.length === 7) {
+                            weeks.push(week);
+                            week = [];
+                        }
+                    });
+
+                    while (week.length < 7) {
+                        week.push({ day: '', status: 'empty' });
+                    }
+
+                    if (week.length > 0) {
+                        weeks.push(week);
+                    }
+
+                    return weeks;
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

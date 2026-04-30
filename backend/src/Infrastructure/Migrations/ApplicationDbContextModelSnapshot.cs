@@ -30,11 +30,19 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("DayHours")
+                        .HasDefaultValue("08:00-20:00")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("HoursPerShift")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Months")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("NightHours")
+                        .HasDefaultValue("20:00-08:00")
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("NightFirst")
                         .HasColumnType("INTEGER");
@@ -43,6 +51,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("StartDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ShiftPattern")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
