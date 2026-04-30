@@ -6,18 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddIdentityTables : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "UserId",
-                table: "ShiftSchedules",
-                type: "TEXT",
-                maxLength: 450,
-                nullable: true);
-
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -55,6 +48,30 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ShiftSchedules",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
+                    UserId = table.Column<string>(type: "TEXT", maxLength: 450, nullable: true),
+                    StartDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    WorkDays = table.Column<int>(type: "INTEGER", nullable: false),
+                    OffDays = table.Column<int>(type: "INTEGER", nullable: false),
+                    HoursPerShift = table.Column<int>(type: "INTEGER", nullable: false),
+                    Months = table.Column<int>(type: "INTEGER", nullable: false),
+                    NightFirst = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CalendarJson = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ShiftPattern = table.Column<string>(type: "TEXT", nullable: true),
+                    DayHours = table.Column<string>(type: "TEXT", nullable: true),
+                    NightHours = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShiftSchedules", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -220,14 +237,13 @@ namespace Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ShiftSchedules");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropColumn(
-                name: "UserId",
-                table: "ShiftSchedules");
         }
     }
 }

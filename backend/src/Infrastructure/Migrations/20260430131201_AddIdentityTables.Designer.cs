@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260429152633_AddIdentityTables")]
+    [Migration("20260430131201_AddIdentityTables")]
     partial class AddIdentityTables
     {
         /// <inheritdoc />
@@ -33,6 +33,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("DayHours")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("HoursPerShift")
                         .HasColumnType("INTEGER");
 
@@ -42,8 +45,14 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("NightFirst")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("NightHours")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("OffDays")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("ShiftPattern")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("TEXT");
