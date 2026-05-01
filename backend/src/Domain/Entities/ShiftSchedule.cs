@@ -16,4 +16,14 @@ public class ShiftSchedule
     public string? ShiftPattern { get; set; } // JSON array: ["day", "night", "off"]
     public string? DayHours { get; set; } = "08:00-20:00"; // Часы дневной смены
     public string? NightHours { get; set; } = "20:00-08:00"; // Часы ночной смены
+    
+    // Поля для расчета зарплаты
+    public decimal? MonthlySalary { get; set; } // Месячный оклад
+    public decimal? HourlyRate { get; set; } // Ставка за час
+    public decimal BaseSalary { get; set; } // Базовая зарплата за рабочие часы
+    public decimal OvertimeSalary { get; set; } // Зарплата за переработки
+    public decimal TotalSalary { get; set; } // Итоговая зарплата с переработками
+    
+    // Связь с переработками
+    public ICollection<Overtime> Overtimes { get; set; } = new List<Overtime>();
 }

@@ -30,12 +30,21 @@ public class ShiftScheduleService : IShiftScheduleService
             Title = title,
             ShiftPattern = JsonSerializer.Serialize(shiftPattern),
             DayHours = request.DayHours,
-            NightHours = request.NightHours
+            NightHours = request.NightHours,
+            MonthlySalary = request.MonthlySalary,
+            HourlyRate = request.HourlyRate,
+            Overtimes = new List<OvertimeOutput>() // Инициализируем явно
         };
 
         var currentDate = request.StartDate;
         var cycleLength = shiftPattern.Count;
         var cycleIndex = 0;
+        
+        // Создаём набор дат переработок для быстрого поиска и суммируем повторы по дате
+        var overtimeDates = request.Overtimes?
+            .GroupBy(o => o.Date.Date)
+            .ToDictionary(g => g.Key, g => g.Sum(o => o.Hours))
+            ?? new Dictionary<DateTime, int>();
 
         for (int month = 0; month < request.Months; month++)
         {
@@ -51,8 +60,15 @@ public class ShiftScheduleService : IShiftScheduleService
             for (int day = 1; day <= daysInMonth; day++)
             {
                 var dayData = new DayData { Day = day, Status = "empty", ShiftType = null };
+                var currentDayDate = new DateTime(monthData.Year, monthData.Month, day);
 
-                if (currentDate.Day == day && currentDate.Month == monthData.Month && currentDate.Year == monthData.Year)
+                // Проверяем переработку
+                if (overtimeDates.ContainsKey(currentDayDate))
+                {
+                    dayData.Status = "overtime";
+                    response.Overtimes.Add(new OvertimeOutput { Date = currentDayDate, Hours = overtimeDates[currentDayDate] });
+                }
+                else if (currentDate.Day == day && currentDate.Month == monthData.Month && currentDate.Year == monthData.Year)
                 {
                     var shiftTypeInCycle = shiftPattern[cycleIndex % cycleLength];
 
@@ -80,6 +96,9 @@ public class ShiftScheduleService : IShiftScheduleService
             response.Months.Add(monthData);
         }
 
+        // Рассчитываем зарплату
+        CalculateSalary(response, request);
+
         if (!string.IsNullOrEmpty(userId))
         {
             var entity = new ShiftSchedule
@@ -97,14 +116,90 @@ public class ShiftScheduleService : IShiftScheduleService
                 DayHours = request.DayHours,
                 NightHours = request.NightHours,
                 CalendarJson = JsonSerializer.Serialize(response),
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                MonthlySalary = request.MonthlySalary,
+                HourlyRate = request.HourlyRate,
+                BaseSalary = response.BaseSalary,
+                OvertimeSalary = response.OvertimeSalary,
+                TotalSalary = response.TotalSalary
             };
+
+            if (response.Overtimes?.Any() == true)
+            {
+                entity.Overtimes = response.Overtimes.Select(ot => new Overtime
+                {
+                    Id = Guid.NewGuid(),
+                    ShiftScheduleId = scheduleId,
+                    OvertimeDate = ot.Date,
+                    Hours = ot.Hours,
+                    Amount = ot.Amount
+                }).ToList();
+            }
 
             await _repository.AddAsync(entity);
             await _repository.TrimUserSchedulesAsync(userId, 5);
         }
 
         return response;
+    }
+
+    private void CalculateSalary(ShiftScheduleResponse response, ShiftScheduleRequest request)
+    {
+        decimal hourlyRate = 0;
+
+        // Определяем часовую ставку
+        if (request.MonthlySalary.HasValue && request.MonthlySalary > 0)
+        {
+            // Средняя рабочая часов в месяц (для РФ обычно 160)
+            const int averageWorkHoursPerMonth = 160;
+            hourlyRate = request.MonthlySalary.Value / averageWorkHoursPerMonth;
+        }
+        else if (request.HourlyRate.HasValue && request.HourlyRate > 0)
+        {
+            hourlyRate = request.HourlyRate.Value;
+        }
+        else
+        {
+            hourlyRate = 0;
+        }
+
+        // Расчет базовой зарплаты
+        response.BaseSalary = response.TotalHours * hourlyRate;
+
+        // Расчет переработок согласно ТК РФ
+        decimal overtimeSalary = 0;
+        if (response.Overtimes?.Any() == true)
+        {
+            foreach (var overtime in response.Overtimes)
+            {
+                if (overtime.Hours <= 0) continue;
+
+                // По ТК РФ:
+                // - Первые 2 часа переработки: оплачиваются не менее чем в полуторном размере (1.5x)
+                // - Остальные часы: оплачиваются не менее чем в двойном размере (2x)
+                
+                decimal amount = 0;
+                if (overtime.Hours <= 2)
+                {
+                    overtime.Multiplier = 1.5m;
+                    amount = overtime.Hours * hourlyRate * overtime.Multiplier;
+                }
+                else
+                {
+                    // Первые 2 часа по 1.5x
+                    amount += 2 * hourlyRate * 1.5m;
+                    // Остальные часы по 2x
+                    overtime.Multiplier = 2.0m;
+                    amount += (overtime.Hours - 2) * hourlyRate * overtime.Multiplier;
+                }
+
+                overtime.Amount = Math.Round(amount, 2);
+                overtimeSalary += overtime.Amount;
+            }
+        }
+
+        response.OvertimeSalary = Math.Round(overtimeSalary, 2);
+        response.TotalSalary = Math.Round(response.BaseSalary + overtimeSalary, 2);
     }
 
     public async Task<IEnumerable<ShiftScheduleHistoryResponse>> GetRecentSchedulesAsync(string userId, int limit = 5)

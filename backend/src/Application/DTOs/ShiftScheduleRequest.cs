@@ -14,4 +14,17 @@ public class ShiftScheduleRequest
     public List<string>? ShiftPattern { get; set; } // Например: ["day", "night", "day", "off"] для цикла
     public string? DayHours { get; set; } = "08:00-20:00"; // Часы дневной смены
     public string? NightHours { get; set; } = "20:00-08:00"; // Часы ночной смены
+    
+    // Поля для расчета зарплаты
+    public decimal? MonthlySalary { get; set; } // Месячный оклад
+    public decimal? HourlyRate { get; set; } // Ставка за час
+    
+    // Переработки
+    public List<OvertimeInput>? Overtimes { get; set; } // Список переработок
+}
+
+public class OvertimeInput
+{
+    public DateTime Date { get; set; }
+    public int Hours { get; set; }
 }

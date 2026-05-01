@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260430190651_AddOvertimeSupport")]
+    partial class AddOvertimeSupport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.4");
@@ -52,9 +55,6 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("BaseSalary")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("CalendarJson")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -85,9 +85,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<int>("OffDays")
                         .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("OvertimeSalary")
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("ShiftPattern")
                         .HasColumnType("TEXT");

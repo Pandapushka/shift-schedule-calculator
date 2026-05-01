@@ -11,6 +11,7 @@ public class ApplicationDbContext : IdentityDbContext
     }
 
     public DbSet<ShiftSchedule> ShiftSchedules { get; set; }
+    public DbSet<Overtime> Overtimes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -22,6 +23,16 @@ public class ApplicationDbContext : IdentityDbContext
             entity.Property(e => e.Title).HasMaxLength(200);
             entity.Property(e => e.CalendarJson).HasColumnType("TEXT");
             entity.Property(e => e.UserId).HasMaxLength(450);
+            entity.HasMany(e => e.Overtimes)
+                .WithOne(o => o.ShiftSchedule)
+                .HasForeignKey(o => o.ShiftScheduleId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Overtime>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Notes).HasMaxLength(500);
         });
     }
 }
