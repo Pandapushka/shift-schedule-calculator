@@ -95,3 +95,37 @@ For local runs use the development environment so `appsettings.Development.json`
 ```bash
 ASPNETCORE_ENVIRONMENT=Development ASPNETCORE_URLS=http://localhost:5000 dotnet run --project backend/src/WebApi/WebApi.csproj
 ```
+
+## 7. Timeweb Cloud App Platform
+
+The repository contains a root `Dockerfile` for Timeweb Cloud App Platform.
+
+Recommended settings:
+
+```text
+Type: Dockerfile
+Project directory: /
+Dockerfile path: Dockerfile
+Container port: 8080
+```
+
+Required runtime environment variables:
+
+```text
+ASPNETCORE_ENVIRONMENT=Production
+ASPNETCORE_URLS=http://0.0.0.0:8080
+Jwt__Issuer=ShiftCalcApi
+Jwt__Key=<long random secret, at least 32 characters>
+Admin__Email=admin@admin.ru
+Admin__Password=<strong password>
+Cors__AllowedOrigins__0=https://your-frontend-domain.ru
+Swagger__Enabled=false
+```
+
+The Docker image uses SQLite at:
+
+```text
+/app/data/shiftschedule.db
+```
+
+For production data that must survive redeploys, prefer a VPS/systemd deployment or move the database to PostgreSQL.
