@@ -144,3 +144,11 @@ Start command:
 ```bash
 dotnet /app/publish/WebApi.dll
 ```
+
+Health check path:
+
+```text
+/health
+```
+
+Do not use `dotnet run` in production. It is a development command and can start too slowly for App Platform health checks.
