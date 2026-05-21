@@ -17,14 +17,14 @@ RUN dotnet publish src/WebApi/WebApi.csproj -c Release -o /app/publish --no-rest
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 
-WORKDIR /app
-RUN mkdir -p /app/data
+WORKDIR /app/publish
+RUN mkdir -p /app/data /app/publish
 
-COPY --from=build /app/publish .
+COPY --from=build /app/publish /app/publish
 
 ENV ASPNETCORE_URLS=http://0.0.0.0:8080
 ENV ConnectionStrings__DefaultConnection="Data Source=/app/data/shiftschedule.db"
 
 EXPOSE 8080
 
-ENTRYPOINT ["dotnet", "WebApi.dll"]
+ENTRYPOINT ["dotnet", "/app/publish/WebApi.dll"]
