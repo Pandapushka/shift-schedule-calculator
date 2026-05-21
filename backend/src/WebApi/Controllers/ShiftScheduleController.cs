@@ -21,8 +21,15 @@ public class ShiftScheduleController : ControllerBase
     public async Task<IActionResult> Calculate([FromBody] ShiftScheduleRequest request)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var result = await _service.CalculateAsync(request, userId);
-        return Ok(result);
+        try
+        {
+            var result = await _service.CalculateAsync(request, userId);
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [Authorize]

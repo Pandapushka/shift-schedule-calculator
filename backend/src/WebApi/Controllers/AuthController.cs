@@ -72,7 +72,7 @@ public class AuthController : ControllerBase
 
     private AuthResponse GenerateJwtToken(IdentityUser user)
     {
-        var jwtKey = _configuration["Jwt:Key"] ?? "SuperSecretDevelopmentKey1234567890123456";
+        var jwtKey = _configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key is not configured.");
         var jwtIssuer = _configuration["Jwt:Issuer"] ?? "ShiftCalcApi";
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 

@@ -26,8 +26,8 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Hours")
-                        .HasColumnType("INTEGER");
+                    b.Property<decimal>("Hours")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
@@ -68,8 +68,8 @@ namespace Infrastructure.Migrations
                     b.Property<decimal?>("HourlyRate")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("HoursPerShift")
-                        .HasColumnType("INTEGER");
+                    b.Property<decimal>("HoursPerShift")
+                        .HasColumnType("TEXT");
 
                     b.Property<decimal?>("MonthlySalary")
                         .HasColumnType("TEXT");
@@ -112,6 +112,56 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ShiftSchedules");
+                });
+
+            modelBuilder.Entity("Domain.Entities.SupportTicket", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AdminReply")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("AnsweredAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Rating")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(5);
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SupportTickets");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

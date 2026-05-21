@@ -1,0 +1,97 @@
+# Backend deployment
+
+## 1. Publish
+
+From the repository root:
+
+```bash
+dotnet publish backend/src/WebApi/WebApi.csproj -c Release -o backend/publish
+```
+
+Copy the contents of `backend/publish` to the server, for example:
+
+```text
+/opt/shiftcalc/backend
+```
+
+## 2. Environment
+
+Create `/etc/shiftcalc/shiftcalc-api.env` from:
+
+```text
+deploy/backend/shiftcalc-api.env.example
+```
+
+Required production values:
+
+```text
+ASPNETCORE_ENVIRONMENT=Production
+ASPNETCORE_URLS=http://127.0.0.1:5000
+ConnectionStrings__DefaultConnection=Data Source=/var/lib/shiftcalc/shiftschedule.db
+Jwt__Issuer=ShiftCalcApi
+Jwt__Key=<long random secret, at least 32 characters>
+Admin__Email=admin@admin.ru
+Admin__Password=<strong password>
+Cors__AllowedOrigins__0=https://your-frontend-domain.ru
+Swagger__Enabled=false
+```
+
+The app intentionally refuses to start in production without `Jwt__Key`, `Admin__Password`, and `Cors__AllowedOrigins`.
+
+## 3. SQLite storage
+
+For the first release SQLite is enough if the database file is stored outside the app folder:
+
+```bash
+sudo mkdir -p /var/lib/shiftcalc
+sudo chown shiftcalc:shiftcalc /var/lib/shiftcalc
+```
+
+Back up this file regularly:
+
+```text
+/var/lib/shiftcalc/shiftschedule.db
+```
+
+## 4. systemd
+
+Copy the service template:
+
+```bash
+sudo cp deploy/backend/shiftcalc-api.service.example /etc/systemd/system/shiftcalc-api.service
+sudo systemctl daemon-reload
+sudo systemctl enable shiftcalc-api
+sudo systemctl start shiftcalc-api
+sudo systemctl status shiftcalc-api
+```
+
+Logs:
+
+```bash
+sudo journalctl -u shiftcalc-api -f
+```
+
+## 5. Nginx
+
+Copy and edit:
+
+```bash
+sudo cp deploy/backend/nginx.shiftcalc-api.conf.example /etc/nginx/sites-available/shiftcalc-api
+sudo ln -s /etc/nginx/sites-available/shiftcalc-api /etc/nginx/sites-enabled/shiftcalc-api
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+Then enable HTTPS with Certbot:
+
+```bash
+sudo certbot --nginx -d api.example.com
+```
+
+## 6. Local development
+
+For local runs use the development environment so `appsettings.Development.json` is loaded:
+
+```bash
+ASPNETCORE_ENVIRONMENT=Development ASPNETCORE_URLS=http://localhost:5000 dotnet run --project backend/src/WebApi/WebApi.csproj
+```

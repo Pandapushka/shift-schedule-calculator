@@ -5,9 +5,11 @@ public class ShiftScheduleRequest
     public DateTime StartDate { get; set; }
     public int WorkDays { get; set; }
     public int OffDays { get; set; }
-    public int HoursPerShift { get; set; }
+    public decimal HoursPerShift { get; set; }
     public int Months { get; set; }
     public bool NightFirst { get; set; }
+    public bool OffFirst { get; set; } // Начать с выходных дней
+    public bool FiveTwoSchedule { get; set; } // Базовый 5/2: суббота и воскресенье всегда выходные
     public string? Title { get; set; }
     public string? ShiftType { get; set; } = "standard"; // "standard", "rotating", "custom"
     public int BreakMinutes { get; set; } = 0;
@@ -26,5 +28,5 @@ public class ShiftScheduleRequest
 public class OvertimeInput
 {
     public DateTime Date { get; set; }
-    public int Hours { get; set; }
+    public decimal Hours { get; set; }
 }

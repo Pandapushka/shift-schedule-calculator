@@ -1,0 +1,16 @@
+[Unit]
+Description=ShiftCalc ASP.NET Core API
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/shiftcalc/backend
+ExecStart=/usr/bin/dotnet /opt/shiftcalc/backend/WebApi.dll
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=shiftcalc-api
+User=shiftcalc
+EnvironmentFile=/etc/shiftcalc/shiftcalc-api.env
+
+[Install]
+WantedBy=multi-user.target
