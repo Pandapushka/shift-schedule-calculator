@@ -129,3 +129,18 @@ The Docker image uses SQLite at:
 ```
 
 For production data that must survive redeploys, prefer a VPS/systemd deployment or move the database to PostgreSQL.
+
+If Timeweb uses the automatic .NET builder instead of the root `Dockerfile`, keep the repository root as the build directory. The root `ShiftScheduleCalculator.sln` exists so automatic commands like `dotnet restore` and `dotnet build` can resolve the backend projects.
+
+For manual automatic-builder commands use:
+
+```bash
+dotnet restore ShiftScheduleCalculator.sln
+dotnet publish backend/src/WebApi/WebApi.csproj -c Release -o /app/publish
+```
+
+Start command:
+
+```bash
+dotnet /app/publish/WebApi.dll
+```
