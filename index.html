@@ -1473,6 +1473,7 @@
 
     <script>
         const { createApp } = Vue;
+        const API_BASE_URL = 'https://pandapushka-shift-schedule-calculator-ac5e.twc1.net';
 
         createApp({
             data() {
@@ -1614,7 +1615,7 @@
                             hours: Number(ot.hours)
                         }));
 
-                        const response = await fetch('http://localhost:5000/api/shiftschedule/calculate', {
+                        const response = await fetch(`${API_BASE_URL}/api/shiftschedule/calculate`, {
                             method: 'POST',
                             headers,
                             body: JSON.stringify(requestData)
@@ -1640,7 +1641,7 @@
                     this.authMessage = '';
 
                     try {
-                        const response = await fetch('http://localhost:5000/api/auth/register', {
+                        const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -1666,7 +1667,7 @@
                     this.authMessage = '';
 
                     try {
-                        const response = await fetch('http://localhost:5000/api/auth/login', {
+                        const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -1715,7 +1716,7 @@
                     }
 
                     try {
-                        const response = await fetch('http://localhost:5000/api/shiftschedule/history', {
+                        const response = await fetch(`${API_BASE_URL}/api/shiftschedule/history`, {
                             headers: {
                                 Authorization: `Bearer ${this.authToken}`
                             }
@@ -1740,7 +1741,7 @@
                 },
                 async fetchSupportTickets() {
                     try {
-                        const response = await fetch('http://localhost:5000/api/support/tickets', {
+                        const response = await fetch(`${API_BASE_URL}/api/support/tickets`, {
                             headers: this.authToken
                                 ? { Authorization: `Bearer ${this.authToken}` }
                                 : {}
@@ -1774,7 +1775,7 @@
                     this.supportMessage = '';
 
                     try {
-                        const response = await fetch('http://localhost:5000/api/support/tickets', {
+                        const response = await fetch(`${API_BASE_URL}/api/support/tickets`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -1811,7 +1812,7 @@
                     this.supportMessage = '';
 
                     try {
-                        const response = await fetch(`http://localhost:5000/api/support/tickets/${ticket.id}/reply`, {
+                        const response = await fetch(`${API_BASE_URL}/api/support/tickets/${ticket.id}/reply`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
