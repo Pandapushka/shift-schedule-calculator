@@ -779,6 +779,54 @@
             margin-bottom: 1.25rem;
         }
 
+        .app-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+            padding: 0.375rem;
+            width: fit-content;
+            max-width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            overflow-x: auto;
+        }
+
+        .app-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            min-height: 2.5rem;
+            padding: 0.625rem 0.875rem;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-light);
+            cursor: pointer;
+            white-space: nowrap;
+            font: inherit;
+            font-weight: 700;
+        }
+
+        .app-tab.active {
+            background: var(--primary);
+            border-color: var(--primary-dark);
+            color: #ffffff;
+        }
+
+        .page-note {
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .overtime-input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
         .form-header,
         .auth-header {
             padding: 1.125rem 1.25rem;
@@ -1087,12 +1135,25 @@
                 justify-content: space-between;
             }
 
+            .app-tabs {
+                width: 100%;
+            }
+
+            .app-tab {
+                flex: 1 0 auto;
+                justify-content: center;
+            }
+
             .form-grid > .form-group {
                 grid-column: 1 / -1;
             }
 
             .form-checkbox {
                 width: 100%;
+            }
+
+            .overtime-input-grid {
+                grid-template-columns: 1fr;
             }
 
             .calendar-table td {
@@ -1157,12 +1218,26 @@
             </div>
         </div>
 
+        <nav class="app-tabs" aria-label="Разделы калькулятора">
+            <button class="app-tab" :class="{ active: activePage === 'schedule' }" type="button" @click="activePage = 'schedule'">
+                <span class="material-icons">calendar_month</span>
+                График смен
+            </button>
+            <button class="app-tab" :class="{ active: activePage === 'overtime' }" type="button" @click="activePage = 'overtime'">
+                <span class="material-icons">payments</span>
+                Переработки
+            </button>
+        </nav>
+
         <!-- Main Form -->
-        <div class="form-card card">
+        <div v-if="activePage === 'schedule'" class="form-card card">
             <div class="form-header">
-                <h2>Параметры графика</h2>
+                <h2>Расчёт графика смен</h2>
             </div>
-            <form class="form-content" @submit.prevent="calculate" novalidate>
+            <form class="form-content" @submit.prevent="calculate('schedule')" novalidate>
+                <p class="page-note">
+                    Здесь рассчитывается только календарь смен: рабочие дни, выходные, дневные и ночные смены.
+                </p>
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Дата начала</label>
@@ -1233,43 +1308,10 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Зарплата -->
-                        <div class="form-grid" style="margin-top: 1.5rem;">
-                            <div class="form-group">
-                                <label class="form-label">Месячный оклад (опционально)</label>
-                                <input class="form-input" type="number" v-model.number="form.monthlySalary" placeholder="0" step="0.01" min="0">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Или ставка за час (опционально)</label>
-                                <input class="form-input" type="number" v-model.number="form.hourlyRate" placeholder="0" step="0.01" min="0">
-                            </div>
-                        </div>
-                        
-                        <!-- Переработки -->
-                        <div class="form-group" style="margin-top: 1.5rem;">
-                            <label class="form-label">Переработки (опционально)</label>
-                            <small style="display: block; color: var(--text-light); margin-bottom: 0.5rem;">
-                                Добавьте дни с переработками. Они будут отображены на календаре отдельно.
-                            </small>
-                            <div style="margin-bottom: 1rem;">
-                                <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 0.5rem; margin-bottom: 0.5rem;">
-                                    <input class="form-input" type="date" v-model="newOvertime.date" placeholder="Дата">
-                                    <input class="form-input" type="number" v-model.number="newOvertime.hours" placeholder="Часов, например 2.30" min="0.01" max="24" step="0.01">
-                                    <button class="btn btn-secondary" type="button" @click.prevent="addOvertime" style="padding: 0.75rem 1rem;">Добавить</button>
-                                </div>
-                                <div v-if="form.overtimes && form.overtimes.length" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                                    <div v-for="(ot, idx) in form.overtimes" :key="idx" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: var(--secondary); border-radius: var(--radius); font-size: 0.875rem;">
-                                        {{ formatDate(ot.date, false) }} - {{ formatHours(ot.hours) }}ч
-                                        <button type="button" @click.prevent="removeOvertime(idx)" style="background: none; border: none; color: #dc2626; cursor: pointer; padding: 0; font-weight: bold;">×</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
-                <button class="btn btn-primary" type="button" @click="calculate" :disabled="loading" style="width: 100%; margin-top: 1rem;">
+                <button class="btn btn-primary" type="button" @click="calculate('schedule')" :disabled="loading" style="width: 100%; margin-top: 1rem;">
                     <span v-if="loading" class="loading">
                         <span class="spinner"></span>
                         Расчёт графика...
@@ -1277,6 +1319,96 @@
                     <span v-else>
                         <span class="material-icons">calculate</span>
                         Рассчитать график
+                    </span>
+                </button>
+            </form>
+        </div>
+
+        <div v-if="activePage === 'overtime'" class="form-card card">
+            <div class="form-header">
+                <h2>Расчёт переработок</h2>
+            </div>
+            <form class="form-content" @submit.prevent="calculate('overtime')" novalidate>
+                <p class="page-note">
+                    Укажите базовый график, ставку или оклад и дни переработок. Оплата рассчитывается по правилам ТК РФ: первые 2 часа рабочего дня с коэффициентом 1.5, далее 2.0, работа в выходной день 2.0.
+                </p>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Дата начала графика</label>
+                        <input class="form-input" type="date" v-model="form.startDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Рабочих дней подряд</label>
+                        <input class="form-input" type="number" v-model.number="form.workDays" min="1" max="7" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Выходных дней подряд</label>
+                        <input class="form-input" type="number" v-model.number="form.offDays" min="1" max="7" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Часов в смене</label>
+                        <input class="form-input" type="number" v-model.number="form.hoursPerShift" min="0.01" max="24" step="0.01" placeholder="11.50" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Количество месяцев</label>
+                        <input class="form-input" type="number" v-model.number="form.months" min="1" max="24" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Название расчёта</label>
+                        <input class="form-input" type="text" v-model="form.title" placeholder="Опционально">
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem;">
+                    <div class="form-checkbox">
+                        <input type="checkbox" v-model="form.offFirst" id="overtimeOffFirst">
+                        <label for="overtimeOffFirst">Начать с выходных</label>
+                    </div>
+                    <div class="form-checkbox">
+                        <input type="checkbox" v-model="form.fiveTwoSchedule" id="overtimeFiveTwoSchedule">
+                        <label for="overtimeFiveTwoSchedule">Базовый 5/2</label>
+                    </div>
+                </div>
+
+                <div class="form-grid" style="margin-top: 1.5rem;">
+                    <div class="form-group">
+                        <label class="form-label">Месячный оклад</label>
+                        <input class="form-input" type="number" v-model.number="form.monthlySalary" placeholder="0" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Или ставка за час</label>
+                        <input class="form-input" type="number" v-model.number="form.hourlyRate" placeholder="0" step="0.01" min="0">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label class="form-label">Переработки</label>
+                    <small style="display: block; color: var(--text-light); margin-bottom: 0.5rem;">
+                        Часы указываются в формате ЧЧ.ММ: например, 2.30 означает 2 часа 30 минут.
+                    </small>
+                    <div class="overtime-input-grid">
+                        <input class="form-input" type="date" v-model="newOvertime.date" placeholder="Дата">
+                        <input class="form-input" type="number" v-model.number="newOvertime.hours" placeholder="Часов, например 2.30" min="0.01" max="24" step="0.01">
+                        <button class="btn btn-secondary" type="button" @click.prevent="addOvertime" style="padding: 0.75rem 1rem;">Добавить</button>
+                    </div>
+                    <div v-if="form.overtimes && form.overtimes.length" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                        <div v-for="(ot, idx) in form.overtimes" :key="idx" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: var(--secondary); border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.875rem;">
+                            {{ formatDate(ot.date, false) }} - {{ formatHours(ot.hours) }}ч
+                            <button type="button" @click.prevent="removeOvertime(idx)" style="background: none; border: none; color: #dc2626; cursor: pointer; padding: 0; font-weight: bold;">×</button>
+                        </div>
+                    </div>
+                    <p v-else style="color: var(--text-light); font-size: 0.875rem;">Добавьте хотя бы одну переработку для расчёта доплаты.</p>
+                </div>
+
+                <button class="btn btn-primary" type="button" @click="calculate('overtime')" :disabled="loading" style="width: 100%; margin-top: 1rem;">
+                    <span v-if="loading" class="loading">
+                        <span class="spinner"></span>
+                        Расчёт переработок...
+                    </span>
+                    <span v-else>
+                        <span class="material-icons">payments</span>
+                        Рассчитать переработки
                     </span>
                 </button>
             </form>
@@ -1375,8 +1507,8 @@
         <!-- Results -->
         <div v-if="result" class="results-section">
             <div class="results-header">
-                <h2>{{ result.title || 'График смен' }}</h2>
-                <p>Обзор вашего рабочего графика</p>
+                <h2>{{ result.title || (resultMode === 'overtime' ? 'Расчёт переработок' : 'График смен') }}</h2>
+                <p>{{ resultMode === 'overtime' ? 'Итоги оплаты и доплат по переработкам' : 'Обзор вашего рабочего графика' }}</p>
             </div>
 
             <div class="calendar-grid">
@@ -1520,7 +1652,9 @@
                     supportTickets: [],
                     scheduleHistory: [],
                     result: null,
+                    resultMode: 'schedule',
                     loading: false,
+                    activePage: 'schedule',
                     advancedOpen: false,
                     shiftCheckboxes: [true, true] // Чекбоксы для рабочих дней: true = день, false = ночь
                 }
@@ -1567,7 +1701,7 @@
                     localStorage.setItem('shiftcalc_theme', this.theme);
                     document.body.setAttribute('data-theme', this.theme);
                 },
-                async calculate() {
+                async calculate(mode = 'schedule') {
                     if (!this.isIntegerInRange(this.form.workDays, 1, 7) ||
                         !this.isIntegerInRange(this.form.offDays, 1, 7) ||
                         !this.isHourMinuteValue(this.form.hoursPerShift) ||
@@ -1575,6 +1709,18 @@
                         !this.form.startDate) {
                         alert('Заполните основные параметры графика. Часы указываются в формате ЧЧ.ММ, где минут не больше 59');
                         return;
+                    }
+
+                    if (mode === 'overtime') {
+                        if (!this.form.overtimes.length) {
+                            alert('Добавьте хотя бы одну переработку');
+                            return;
+                        }
+
+                        if (!(Number(this.form.hourlyRate) > 0) && !(Number(this.form.monthlySalary) > 0)) {
+                            alert('Укажите часовую ставку или месячный оклад для расчёта оплаты');
+                            return;
+                        }
                     }
 
                     this.loading = true;
@@ -1610,10 +1756,17 @@
                             }
                         }
                         requestData.shiftPattern = shiftPattern;
-                        requestData.overtimes = (this.form.overtimes || []).map(ot => ({
-                            date: ot.date,
-                            hours: Number(ot.hours)
-                        }));
+
+                        if (mode === 'overtime') {
+                            requestData.overtimes = (this.form.overtimes || []).map(ot => ({
+                                date: ot.date,
+                                hours: Number(ot.hours)
+                            }));
+                        } else {
+                            requestData.monthlySalary = null;
+                            requestData.hourlyRate = null;
+                            requestData.overtimes = [];
+                        }
 
                         const response = await fetch(`${API_BASE_URL}/api/shiftschedule/calculate`, {
                             method: 'POST',
@@ -1626,6 +1779,7 @@
                         }
 
                         this.result = await response.json();
+                        this.resultMode = mode;
 
                         if (this.authorized) {
                             await this.fetchHistory();
