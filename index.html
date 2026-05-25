@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Балдежный калькулятор</title>
+    <title>Калькулятор графика смен онлайн — Балдежный калькулятор</title>
+    <meta name="description" content="Онлайн-калькулятор графика смен: рассчитайте 2/2, 3/3, 1/3, 5/2 и переработки по ТК РФ за минуту.">
+    <meta name="keywords" content="калькулятор графика смен, график 2/2, график 3/3, сменный график, расчет переработок, ТК РФ">
+    <meta property="og:title" content="Балдежный калькулятор графика смен">
+    <meta property="og:description" content="Быстрый расчет графиков 2/2, 3/3, 1/3, 5/2 и переработок онлайн.">
+    <meta property="og:type" content="website">
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -65,6 +70,13 @@
         }
 
         .header-left h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .site-brand {
             font-size: 1.875rem;
             font-weight: 700;
             color: var(--text);
@@ -1243,7 +1255,17 @@
             font-weight: 800;
         }
 
+        .site-brand {
+            color: var(--primary-dark);
+            font-size: clamp(1.25rem, 1.8vw, 1.55rem);
+            font-weight: 800;
+        }
+
         [data-theme="dark"] .header-left h1 {
+            color: var(--primary);
+        }
+
+        [data-theme="dark"] .site-brand {
             color: var(--primary);
         }
 
@@ -1577,6 +1599,203 @@
             font-size: 0.9rem;
             line-height: 1.45;
         }
+
+        .hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+            gap: 1rem;
+            align-items: stretch;
+            margin-bottom: 1rem;
+        }
+
+        .hero-main,
+        .hero-side,
+        .seo-section,
+        .result-highlights {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+
+        .hero-main {
+            padding: clamp(1.1rem, 2vw, 1.6rem);
+        }
+
+        .hero-main h1 {
+            max-width: 760px;
+            color: var(--primary-dark);
+            font-size: clamp(1.85rem, 4vw, 3rem);
+            line-height: 1.08;
+        }
+
+        .hero-main p {
+            max-width: 720px;
+            margin-top: 0.8rem;
+            color: var(--text-light);
+            font-size: 1.05rem;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.65rem;
+            margin-top: 1rem;
+        }
+
+        .hero-side {
+            display: grid;
+            gap: 0.65rem;
+            padding: 1rem;
+            background: var(--surface-muted);
+        }
+
+        .trust-item {
+            display: flex;
+            gap: 0.65rem;
+            align-items: flex-start;
+            color: var(--text);
+            font-size: 0.94rem;
+        }
+
+        .trust-item .material-icons {
+            color: var(--primary);
+            font-size: 1.25rem;
+        }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 0.5rem;
+            margin: 0.5rem 0 1rem;
+        }
+
+        .preset-button {
+            min-height: 4.6rem;
+            padding: 0.7rem;
+            background: var(--surface-muted);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            text-align: left;
+            transition: var(--transition);
+        }
+
+        .preset-button:hover,
+        .preset-button.active {
+            border-color: var(--primary);
+            background: var(--work-bg);
+        }
+
+        .preset-button strong {
+            display: block;
+            color: var(--primary-dark);
+            font-size: 1.15rem;
+            line-height: 1.1;
+        }
+
+        .preset-button span {
+            display: block;
+            margin-top: 0.25rem;
+            color: var(--text-light);
+            font-size: 0.78rem;
+            line-height: 1.25;
+        }
+
+        .simple-tip {
+            margin: 0.5rem 0 1rem;
+            padding: 0.8rem 0.9rem;
+            background: var(--salary-bg);
+            color: var(--salary-text);
+            border: 1px solid color-mix(in srgb, var(--salary-text) 24%, var(--border));
+            border-radius: var(--radius);
+            font-size: 0.92rem;
+        }
+
+        .result-highlights {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 0;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .result-highlight {
+            padding: 1rem;
+            border-right: 1px solid var(--border);
+        }
+
+        .result-highlight:last-child {
+            border-right: 0;
+        }
+
+        .result-highlight span {
+            display: block;
+            color: var(--text-light);
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .result-highlight strong {
+            color: var(--primary-dark);
+            font-size: 1.15rem;
+        }
+
+        .seo-section {
+            margin-top: 1rem;
+            padding: 1.15rem;
+        }
+
+        .seo-section h2 {
+            color: var(--primary-dark);
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .seo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.85rem;
+        }
+
+        .seo-card {
+            padding: 0.9rem;
+            background: var(--surface-muted);
+            border: 1px solid var(--border);
+        }
+
+        .seo-card h3 {
+            color: var(--text);
+            font-size: 1rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .seo-card p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            line-height: 1.45;
+        }
+
+        @media (max-width: 820px) {
+            .hero,
+            .seo-grid,
+            .result-highlights {
+                grid-template-columns: 1fr;
+            }
+
+            .preset-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .result-highlight {
+                border-right: 0;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .result-highlight:last-child {
+                border-bottom: 0;
+            }
+        }
     </style>
 </head>
 <body :data-theme="theme">
@@ -1584,7 +1803,7 @@
         <!-- Header -->
         <header class="header">
             <div class="header-left">
-                <h1>Балдежный калькулятор</h1>
+                <div class="site-brand">Балдежный калькулятор</div>
                 <p>Расчёт графиков смен и переработок</p>
             </div>
             <div class="header-right">
@@ -1646,6 +1865,39 @@
             </div>
         </div>
 
+        <section class="hero">
+            <div class="hero-main">
+                <h1>Калькулятор графика смен онлайн</h1>
+                <p>
+                    Рассчитайте график 2/2, 3/3, 1/3, 5/2 или свой режим за минуту. Без регистрации — регистрация нужна только для сохранения истории.
+                </p>
+                <div class="hero-actions">
+                    <button class="btn btn-primary" type="button" @click="activePage = 'schedule'">
+                        <span class="material-icons">calendar_month</span>
+                        Рассчитать график
+                    </button>
+                    <button class="btn btn-secondary" type="button" @click="activePage = 'overtime'">
+                        <span class="material-icons">payments</span>
+                        Посчитать переработки
+                    </button>
+                </div>
+            </div>
+            <aside class="hero-side" aria-label="Возможности калькулятора">
+                <div class="trust-item">
+                    <span class="material-icons">bolt</span>
+                    <div><strong>Быстрые шаблоны</strong><br>2/2, 3/3, 1/3 и 5/2 уже настроены.</div>
+                </div>
+                <div class="trust-item">
+                    <span class="material-icons">visibility</span>
+                    <div><strong>Понятный календарь</strong><br>Рабочие, выходные и ночные смены отмечены цветом.</div>
+                </div>
+                <div class="trust-item">
+                    <span class="material-icons">gavel</span>
+                    <div><strong>Переработки</strong><br>Отдельный расчёт доплат по правилам ТК РФ.</div>
+                </div>
+            </aside>
+        </section>
+
         <nav class="app-tabs" aria-label="Разделы калькулятора">
             <button class="app-tab" :class="{ active: activePage === 'schedule' }" type="button" @click="activePage = 'schedule'">
                 <span class="material-icons">calendar_month</span>
@@ -1653,30 +1905,40 @@
             </button>
             <button class="app-tab" :class="{ active: activePage === 'overtime' }" type="button" @click="activePage = 'overtime'">
                 <span class="material-icons">payments</span>
-                Переработки
+                Расчёт переработок
             </button>
         </nav>
 
         <!-- Main Form -->
         <div v-if="activePage === 'schedule'" class="form-card card">
             <div class="form-header">
-                <h2>Расчёт графика смен</h2>
+                <h2>Рассчитайте график смен</h2>
             </div>
             <form class="form-content" @submit.prevent="calculate('schedule')" novalidate>
                 <p class="page-note">
-                    Здесь рассчитывается только календарь смен: рабочие дни, выходные, дневные и ночные смены.
+                    Выберите готовый шаблон или настройте свой график. Для обычного расчёта достаточно даты начала, типа графика, часов в смене и количества месяцев.
                 </p>
+                <label class="form-label">Тип графика</label>
+                <div class="preset-grid" role="group" aria-label="Быстрые шаблоны графика">
+                    <button v-for="preset in schedulePresets" :key="preset.key" class="preset-button" :class="{ active: selectedPreset === preset.key }" type="button" @click="applySchedulePreset(preset.key)">
+                        <strong>{{ preset.label }}</strong>
+                        <span>{{ preset.description }}</span>
+                    </button>
+                </div>
+                <div class="simple-tip">
+                    Формат часов: <strong>11.30</strong> означает 11 часов 30 минут. Минуты не могут быть больше 59.
+                </div>
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Дата начала</label>
                         <input class="form-input" type="date" v-model="form.startDate" required>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Рабочих дней подряд</label>
+                    <div class="form-group" v-if="selectedPreset === 'custom'">
+                        <label class="form-label">Сколько дней работаете подряд</label>
                         <input class="form-input" type="number" v-model.number="form.workDays" min="1" max="7" required>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Выходных дней подряд</label>
+                    <div class="form-group" v-if="selectedPreset === 'custom'">
+                        <label class="form-label">Сколько дней отдыхаете подряд</label>
                         <input class="form-input" type="number" v-model.number="form.offDays" min="1" max="7" required>
                     </div>
                     <div class="form-group">
@@ -1687,23 +1949,6 @@
                         <label class="form-label">Количество месяцев</label>
                         <input class="form-input" type="number" v-model.number="form.months" min="1" max="24" required>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Название графика</label>
-                        <input class="form-input" type="text" v-model="form.title" placeholder="Опционально">
-                    </div>
-                </div>
-
-                <div class="form-checkbox">
-                    <input type="checkbox" v-model="form.nightFirst" id="nightFirst">
-                    <label for="nightFirst">Начать с ночной смены</label>
-                </div>
-                <div class="form-checkbox">
-                    <input type="checkbox" v-model="form.offFirst" id="offFirst">
-                    <label for="offFirst">Начать с выходных</label>
-                </div>
-                <div class="form-checkbox">
-                    <input type="checkbox" v-model="form.fiveTwoSchedule" id="fiveTwoSchedule">
-                    <label for="fiveTwoSchedule">Базовый 5/2 (сб и вс выходные)</label>
                 </div>
 
                 <!-- Advanced Settings Accordion -->
@@ -1715,12 +1960,30 @@
                     <div class="accordion-content" :class="{ open: advancedOpen }">
                         <div class="form-grid">
                             <div class="form-group">
+                                <label class="form-label">Название графика</label>
+                                <input class="form-input" type="text" v-model="form.title" placeholder="Например: мой график на лето">
+                            </div>
+                            <div class="form-group">
                                 <label class="form-label">Время дневной смены</label>
                                 <input class="form-input" type="text" v-model="form.dayHours" placeholder="08:00-20:00">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Время ночной смены</label>
                                 <input class="form-input" type="text" v-model="form.nightHours" placeholder="20:00-08:00">
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem;">
+                            <div class="form-checkbox">
+                                <input type="checkbox" v-model="form.nightFirst" id="nightFirst">
+                                <label for="nightFirst">Начать с ночной смены</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" v-model="form.offFirst" id="offFirst">
+                                <label for="offFirst">Начать с выходных</label>
+                            </div>
+                            <div class="form-checkbox">
+                                <input type="checkbox" v-model="form.fiveTwoSchedule" id="fiveTwoSchedule">
+                                <label for="fiveTwoSchedule">Базовый 5/2: суббота и воскресенье выходные</label>
                             </div>
                         </div>
                         <div class="form-group" style="margin-top: 1.5rem;">
@@ -1760,18 +2023,25 @@
                 <p class="page-note">
                     Укажите базовый график, ставку или оклад и дни переработок. Оплата рассчитывается по правилам ТК РФ: первые 2 часа рабочего дня с коэффициентом 1.5, далее 2.0, работа в выходной день 2.0.
                 </p>
+                <label class="form-label">Базовый график</label>
+                <div class="preset-grid" role="group" aria-label="Быстрые шаблоны базового графика">
+                    <button v-for="preset in schedulePresets" :key="'overtime-' + preset.key" class="preset-button" :class="{ active: selectedPreset === preset.key }" type="button" @click="applySchedulePreset(preset.key)">
+                        <strong>{{ preset.label }}</strong>
+                        <span>{{ preset.description }}</span>
+                    </button>
+                </div>
 
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Дата начала графика</label>
                         <input class="form-input" type="date" v-model="form.startDate" required>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Рабочих дней подряд</label>
+                    <div class="form-group" v-if="selectedPreset === 'custom'">
+                        <label class="form-label">Сколько дней работаете подряд</label>
                         <input class="form-input" type="number" v-model.number="form.workDays" min="1" max="7" required>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Выходных дней подряд</label>
+                    <div class="form-group" v-if="selectedPreset === 'custom'">
+                        <label class="form-label">Сколько дней отдыхаете подряд</label>
                         <input class="form-input" type="number" v-model.number="form.offDays" min="1" max="7" required>
                     </div>
                     <div class="form-group">
@@ -1928,6 +2198,24 @@
             </div>
         </section>
 
+        <section class="seo-section">
+            <h2>Что можно рассчитать</h2>
+            <div class="seo-grid">
+                <div class="seo-card">
+                    <h3>График 2/2 и 3/3</h3>
+                    <p>Выберите шаблон, дату начала и количество месяцев — календарь смен появится сразу после расчёта.</p>
+                </div>
+                <div class="seo-card">
+                    <h3>График 5/2</h3>
+                    <p>Для базового 5/2 автоматически ставится 8 часов в смене, а суббота и воскресенье считаются выходными.</p>
+                </div>
+                <div class="seo-card">
+                    <h3>Переработки</h3>
+                    <p>Отдельная вкладка считает доплаты за переработки: первые 2 часа с коэффициентом 1.5, дальше 2.0.</p>
+                </div>
+            </div>
+        </section>
+
         <!-- History -->
         <div v-if="authorized && scheduleHistory.length" class="history-section">
             <div class="history-header">
@@ -1958,6 +2246,25 @@
             <div class="results-header">
                 <h2>{{ result.title || (resultMode === 'overtime' ? 'Расчёт переработок' : 'График смен') }}</h2>
                 <p>{{ resultMode === 'overtime' ? 'Итоги оплаты и доплат по переработкам' : 'Обзор вашего рабочего графика' }}</p>
+            </div>
+
+            <div class="result-highlights">
+                <div class="result-highlight">
+                    <span>Всего смен</span>
+                    <strong>{{ result.totalWorkCount }}</strong>
+                </div>
+                <div class="result-highlight">
+                    <span>Всего часов</span>
+                    <strong>{{ formatHours(result.totalHours) }}</strong>
+                </div>
+                <div class="result-highlight">
+                    <span>Первый рабочий день</span>
+                    <strong>{{ getFirstResultDate('work') }}</strong>
+                </div>
+                <div class="result-highlight">
+                    <span>Первый выходной</span>
+                    <strong>{{ getFirstResultDate('off') }}</strong>
+                </div>
             </div>
 
             <div class="calendar-grid">
@@ -2192,6 +2499,14 @@
                     resultMode: 'schedule',
                     loading: false,
                     activePage: 'schedule',
+                    selectedPreset: '2-2',
+                    schedulePresets: [
+                        { key: '2-2', label: '2/2', description: '2 дня работаете, 2 отдыхаете' },
+                        { key: '3-3', label: '3/3', description: '3 дня работаете, 3 отдыхаете' },
+                        { key: '1-3', label: '1/3', description: '1 рабочий день и 3 выходных' },
+                        { key: '5-2', label: '5/2', description: 'Пн-пт рабочие, сб-вс выходные' },
+                        { key: 'custom', label: 'Свой', description: 'Задайте рабочие и выходные дни вручную' }
+                    ],
                     advancedOpen: false,
                     legalView: '',
                     cookieAccepted: localStorage.getItem('shiftcalc_cookie_ok') === '1',
@@ -2259,6 +2574,30 @@
                 acceptCookies() {
                     this.cookieAccepted = true;
                     localStorage.setItem('shiftcalc_cookie_ok', '1');
+                },
+                applySchedulePreset(key) {
+                    this.selectedPreset = key;
+
+                    const presets = {
+                        '2-2': { workDays: 2, offDays: 2, hoursPerShift: 11, fiveTwoSchedule: false },
+                        '3-3': { workDays: 3, offDays: 3, hoursPerShift: 11, fiveTwoSchedule: false },
+                        '1-3': { workDays: 1, offDays: 3, hoursPerShift: 24, fiveTwoSchedule: false },
+                        '5-2': { workDays: 5, offDays: 2, hoursPerShift: 8, fiveTwoSchedule: true }
+                    };
+
+                    const preset = presets[key];
+                    if (!preset) {
+                        this.form.fiveTwoSchedule = false;
+                        return;
+                    }
+
+                    this.form.workDays = preset.workDays;
+                    this.form.offDays = preset.offDays;
+                    this.form.hoursPerShift = preset.hoursPerShift;
+                    this.form.fiveTwoSchedule = preset.fiveTwoSchedule;
+                    this.form.offFirst = false;
+
+                    this.shiftCheckboxes = Array.from({ length: preset.workDays }, () => true);
                 },
                 async calculate(mode = 'schedule') {
                     if (!this.isIntegerInRange(this.form.workDays, 1, 7) ||
@@ -2625,6 +2964,20 @@
                     }
 
                     return weeks;
+                },
+                getFirstResultDate(status) {
+                    if (!this.result || !Array.isArray(this.result.months)) {
+                        return '—';
+                    }
+
+                    for (const month of this.result.months) {
+                        const day = (month.days || []).find(item => item.status === status);
+                        if (day) {
+                            return this.formatDate(`${month.year}-${String(month.month).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`, false);
+                        }
+                    }
+
+                    return '—';
                 },
                 addOvertime() {
                     if (!this.newOvertime.date || !this.isHourMinuteValue(this.newOvertime.hours)) {
