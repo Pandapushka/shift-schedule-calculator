@@ -1468,6 +1468,115 @@
                 padding: 0.55rem 0.45rem;
             }
         }
+
+        .legal-link {
+            color: var(--primary-dark);
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        [data-theme="dark"] .legal-link {
+            color: var(--primary);
+        }
+
+        .legal-note {
+            display: block;
+            margin-top: 0.35rem;
+            color: var(--text-light);
+            font-size: 0.8125rem;
+            line-height: 1.45;
+        }
+
+        .legal-footer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem 1rem;
+            margin: 1.25rem 0 0.5rem;
+            padding: 1rem 0 0;
+            border-top: 1px solid var(--border);
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .legal-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: grid;
+            place-items: center;
+            padding: 1rem;
+            background: rgb(0 0 0 / 0.46);
+        }
+
+        .legal-card {
+            width: min(860px, 100%);
+            max-height: min(84vh, 780px);
+            overflow: auto;
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .legal-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 1.1rem;
+            background: var(--surface-muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .legal-card-header h2 {
+            margin: 0;
+            color: var(--primary-dark);
+            font-size: 1.2rem;
+        }
+
+        .legal-card-content {
+            padding: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .legal-card-content h3 {
+            margin: 1rem 0 0.35rem;
+            color: var(--primary-dark);
+            font-size: 1rem;
+        }
+
+        .legal-card-content p,
+        .legal-card-content li {
+            margin-bottom: 0.55rem;
+        }
+
+        .legal-card-content ul {
+            padding-left: 1.25rem;
+        }
+
+        .cookie-banner {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 900;
+            width: min(520px, calc(100vw - 2rem));
+            padding: 1rem;
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .cookie-banner p {
+            margin: 0 0 0.75rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            line-height: 1.45;
+        }
     </style>
 </head>
 <body :data-theme="theme">
@@ -1508,7 +1617,19 @@
                         <label class="form-label">Пароль</label>
                         <input class="form-input" type="password" v-model="authForm.password" required>
                     </div>
-                    <button class="btn btn-primary" type="submit" :disabled="authLoading" style="width: 100%;">
+                    <div v-if="showAuth === 'register'" class="form-checkbox" style="width: 100%; align-items: flex-start;">
+                        <input type="checkbox" v-model="authForm.personalDataConsent" id="authPersonalDataConsent" required>
+                        <label for="authPersonalDataConsent">
+                            Я согласен с обработкой персональных данных
+                            <span class="legal-note">
+                                Принимаю
+                                <a class="legal-link" href="#" @click.prevent="openLegal('privacy')">политику обработки персональных данных</a>
+                                и
+                                <a class="legal-link" href="#" @click.prevent="openLegal('consent')">согласие на обработку персональных данных</a>.
+                            </span>
+                        </label>
+                    </div>
+                    <button class="btn btn-primary" type="submit" :disabled="authLoading || (showAuth === 'register' && !authForm.personalDataConsent)" style="width: 100%;">
                         <span v-if="authLoading" class="loading">
                             <span class="spinner"></span>
                             Подождите...
@@ -1748,9 +1869,30 @@
                         </select>
                     </div>
                     <textarea class="form-input" v-model="supportForm.message" maxlength="2000" rows="4" placeholder="Напишите отзыв или вопрос"></textarea>
+                    <div class="form-checkbox" style="width: 100%; align-items: flex-start;">
+                        <input type="checkbox" v-model="supportForm.personalDataConsent" id="supportPersonalDataConsent" required>
+                        <label for="supportPersonalDataConsent">
+                            Я согласен с обработкой персональных данных
+                            <span class="legal-note">
+                                Подробнее:
+                                <a class="legal-link" href="#" @click.prevent="openLegal('privacy')">политика</a>
+                                и
+                                <a class="legal-link" href="#" @click.prevent="openLegal('consent')">согласие</a>.
+                            </span>
+                        </label>
+                    </div>
+                    <div class="form-checkbox" style="width: 100%; align-items: flex-start;">
+                        <input type="checkbox" v-model="supportForm.publicationConsent" id="supportPublicationConsent" required>
+                        <label for="supportPublicationConsent">
+                            Я согласен с публикацией отзыва и ответа администратора на сайте
+                            <span class="legal-note">
+                                Email публично не показывается обычным посетителям, но текст отзыва, оценка, дата и ответ администратора видны всем.
+                            </span>
+                        </label>
+                    </div>
                     <div style="display: flex; justify-content: space-between; gap: 1rem; align-items: center;">
                         <span style="color: var(--text-light); font-size: 0.8125rem;">{{ supportForm.message.length }}/2000</span>
-                        <button class="btn btn-primary" type="submit" :disabled="supportLoading">
+                        <button class="btn btn-primary" type="submit" :disabled="supportLoading || !supportForm.personalDataConsent || !supportForm.publicationConsent">
                             {{ supportLoading ? 'Отправка...' : 'Отправить' }}
                         </button>
                     </div>
@@ -1908,6 +2050,91 @@
                 </div>
             </div>
         </div>
+
+        <footer class="legal-footer" aria-label="Юридическая информация">
+            <a class="legal-link" href="#" @click.prevent="openLegal('privacy')">Политика обработки персональных данных</a>
+            <a class="legal-link" href="#" @click.prevent="openLegal('consent')">Согласие на обработку персональных данных</a>
+            <a class="legal-link" href="#" @click.prevent="openLegal('terms')">Пользовательское соглашение</a>
+            <a class="legal-link" href="#" @click.prevent="openLegal('cookies')">Cookies и localStorage</a>
+        </footer>
+
+        <div v-if="legalView" class="legal-modal" @click="closeLegal">
+            <section class="legal-card" @click.stop>
+                <div class="legal-card-header">
+                    <h2>{{ legalTitle }}</h2>
+                    <button class="btn btn-secondary" type="button" @click="closeLegal">Закрыть</button>
+                </div>
+                <div class="legal-card-content" v-if="legalView === 'privacy'">
+                    <p><strong>Дата публикации:</strong> 25 мая 2026 года.</p>
+                    <p>Настоящая политика описывает порядок обработки персональных данных пользователей сайта «Балдежный калькулятор».</p>
+                    <h3>Оператор</h3>
+                    <p>Оператором персональных данных является владелец сайта. Для полноценного продакшен-запуска в этом разделе нужно указать фактические данные оператора: ФИО или наименование, контакт для обращений по персональным данным и, при необходимости, адрес местонахождения.</p>
+                    <h3>Какие данные обрабатываются</h3>
+                    <ul>
+                        <li>email пользователя;</li>
+                        <li>пароль в защищённом виде на стороне сервера;</li>
+                        <li>тексты отзывов, вопросов, оценки, даты создания и ответы администратора;</li>
+                        <li>параметры рассчитанных графиков и история расчётов авторизованного пользователя;</li>
+                        <li>технические данные: IP-адрес, user-agent, дата и время обращения, данные localStorage/cookies, необходимые для работы сайта.</li>
+                    </ul>
+                    <h3>Цели обработки</h3>
+                    <ul>
+                        <li>регистрация и авторизация пользователя;</li>
+                        <li>сохранение истории графиков;</li>
+                        <li>публикация отзывов и ответов администратора;</li>
+                        <li>обеспечение безопасности, диагностика ошибок и защита от злоупотреблений;</li>
+                        <li>исполнение требований законодательства РФ.</li>
+                    </ul>
+                    <h3>Сроки хранения</h3>
+                    <p>Данные хранятся до удаления аккаунта, отзыва или до достижения целей обработки, если иной срок не требуется законом.</p>
+                    <h3>Права пользователя</h3>
+                    <p>Пользователь может запросить сведения об обработке, исправление, блокировку или удаление данных, а также отозвать согласие на обработку персональных данных.</p>
+                    <h3>Передача третьим лицам</h3>
+                    <p>Данные могут обрабатываться хостинг-провайдером и техническими сервисами, которые обеспечивают работу сайта. Публично отображаются только отзыв, оценка, дата публикации и ответ администратора; email обычным посетителям не показывается.</p>
+                </div>
+                <div class="legal-card-content" v-else-if="legalView === 'consent'">
+                    <p><strong>Дата публикации:</strong> 25 мая 2026 года.</p>
+                    <p>Нажимая чекбокс согласия при регистрации или отправке отзыва, пользователь свободно, своей волей и в своём интересе даёт согласие оператору сайта на обработку персональных данных.</p>
+                    <h3>Состав данных</h3>
+                    <p>Email, пароль в защищённом виде, данные авторизации, параметры расчётов, текст отзыва или вопроса, оценка, дата и время публикации, технические данные обращения к сайту.</p>
+                    <h3>Действия с данными</h3>
+                    <p>Сбор, запись, систематизация, накопление, хранение, уточнение, использование, передача хостинг-провайдеру для технической обработки, блокирование, удаление и уничтожение.</p>
+                    <h3>Срок действия</h3>
+                    <p>Согласие действует до его отзыва пользователем или до прекращения обработки данных. Для отзыва согласия пользователь обращается к оператору сайта по контактам, указанным владельцем проекта.</p>
+                </div>
+                <div class="legal-card-content" v-else-if="legalView === 'terms'">
+                    <p><strong>Дата публикации:</strong> 25 мая 2026 года.</p>
+                    <h3>Назначение сервиса</h3>
+                    <p>Сайт предоставляет инструменты для расчёта графиков смен и ориентировочного расчёта переработок.</p>
+                    <h3>Ограничение ответственности</h3>
+                    <p>Расчёты носят информационный характер и не являются юридической, бухгалтерской или кадровой консультацией. Перед применением результатов пользователь самостоятельно проверяет расчёт с учётом трудового договора, локальных актов работодателя и действующего законодательства РФ.</p>
+                    <h3>Отзывы</h3>
+                    <p>Пользователь несёт ответственность за содержание отзыва. Администрация вправе удалить отзыв, если он нарушает закон, права третьих лиц, содержит персональные данные других людей, оскорбления, спам или рекламу.</p>
+                    <h3>Аккаунт</h3>
+                    <p>Пользователь обязан хранить пароль в тайне и не передавать доступ третьим лицам.</p>
+                </div>
+                <div class="legal-card-content" v-else>
+                    <p>Сайт использует технические cookies и localStorage для работы интерфейса, авторизации и сохранения выбранной темы.</p>
+                    <h3>Что сохраняется в браузере</h3>
+                    <ul>
+                        <li>токен авторизации после входа;</li>
+                        <li>email авторизованного пользователя;</li>
+                        <li>выбранная светлая или тёмная тема;</li>
+                        <li>факт принятия уведомления о cookies/localStorage.</li>
+                    </ul>
+                    <p>Эти данные нужны для работы сайта. Если в будущем будет подключена аналитика или рекламные пиксели, потребуется отдельное согласие до их включения.</p>
+                </div>
+            </section>
+        </div>
+
+        <div v-if="!cookieAccepted" class="cookie-banner" role="dialog" aria-label="Уведомление о cookies">
+            <p>
+                Сайт использует технические cookies и localStorage для авторизации, сохранения темы и стабильной работы сервиса.
+                Продолжая пользоваться сайтом, вы принимаете
+                <a class="legal-link" href="#" @click.prevent="openLegal('cookies')">условия использования cookies/localStorage</a>.
+            </p>
+            <button class="btn btn-primary" type="button" @click="acceptCookies">Понятно</button>
+        </div>
     </div>
 
     <script>
@@ -1943,7 +2170,8 @@
                     },
                     authForm: {
                         email: '',
-                        password: ''
+                        password: '',
+                        personalDataConsent: false
                     },
                     authToken: '',
                     userEmail: '',
@@ -1954,7 +2182,9 @@
                     supportMessage: '',
                     supportForm: {
                         message: '',
-                        rating: 5
+                        rating: 5,
+                        personalDataConsent: false,
+                        publicationConsent: false
                     },
                     supportTickets: [],
                     scheduleHistory: [],
@@ -1963,6 +2193,8 @@
                     loading: false,
                     activePage: 'schedule',
                     advancedOpen: false,
+                    legalView: '',
+                    cookieAccepted: localStorage.getItem('shiftcalc_cookie_ok') === '1',
                     shiftCheckboxes: [true, true] // Чекбоксы для рабочих дней: true = день, false = ночь
                 }
             },
@@ -1972,6 +2204,16 @@
                 },
                 isAdmin() {
                     return this.userEmail.toLowerCase() === 'admin@admin.ru';
+                },
+                legalTitle() {
+                    const titles = {
+                        privacy: 'Политика обработки персональных данных',
+                        consent: 'Согласие на обработку персональных данных',
+                        terms: 'Пользовательское соглашение',
+                        cookies: 'Cookies и localStorage'
+                    };
+
+                    return titles[this.legalView] || 'Юридическая информация';
                 }
             },
             mounted() {
@@ -2007,6 +2249,16 @@
                     this.theme = this.theme === 'light' ? 'dark' : 'light';
                     localStorage.setItem('shiftcalc_theme', this.theme);
                     document.body.setAttribute('data-theme', this.theme);
+                },
+                openLegal(view) {
+                    this.legalView = view;
+                },
+                closeLegal() {
+                    this.legalView = '';
+                },
+                acceptCookies() {
+                    this.cookieAccepted = true;
+                    localStorage.setItem('shiftcalc_cookie_ok', '1');
                 },
                 async calculate(mode = 'schedule') {
                     if (!this.isIntegerInRange(this.form.workDays, 1, 7) ||
@@ -2098,6 +2350,11 @@
                     }
                 },
                 async register() {
+                    if (!this.authForm.personalDataConsent) {
+                        this.authMessage = 'Для регистрации нужно согласие на обработку персональных данных';
+                        return;
+                    }
+
                     this.authLoading = true;
                     this.authMessage = '';
 
@@ -2107,7 +2364,10 @@
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify(this.authForm)
+                            body: JSON.stringify({
+                                email: this.authForm.email,
+                                password: this.authForm.password
+                            })
                         });
 
                         if (!response.ok) {
@@ -2117,6 +2377,7 @@
 
                         this.authMessage = 'Регистрация прошла успешно. Войдите в аккаунт.';
                         this.showAuth = 'login';
+                        this.authForm.personalDataConsent = false;
                     } catch (error) {
                         this.authMessage = error.message;
                     } finally {
@@ -2133,7 +2394,10 @@
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify(this.authForm)
+                            body: JSON.stringify({
+                                email: this.authForm.email,
+                                password: this.authForm.password
+                            })
                         });
 
                         if (!response.ok) {
@@ -2170,6 +2434,8 @@
                     this.supportMessage = '';
                     this.supportForm.message = '';
                     this.supportForm.rating = 5;
+                    this.supportForm.personalDataConsent = false;
+                    this.supportForm.publicationConsent = false;
                 },
                 async fetchHistory() {
                     if (!this.authToken) {
@@ -2232,6 +2498,11 @@
                         return;
                     }
 
+                    if (!this.supportForm.personalDataConsent || !this.supportForm.publicationConsent) {
+                        this.supportMessage = 'Подтвердите согласие на обработку персональных данных и публикацию отзыва';
+                        return;
+                    }
+
                     this.supportLoading = true;
                     this.supportMessage = '';
 
@@ -2255,6 +2526,8 @@
 
                         this.supportForm.message = '';
                         this.supportForm.rating = 5;
+                        this.supportForm.personalDataConsent = false;
+                        this.supportForm.publicationConsent = false;
                         this.supportMessage = 'Отзыв отправлен';
                         await this.fetchSupportTickets();
                     } catch (error) {
