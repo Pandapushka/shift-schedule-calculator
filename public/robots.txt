@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /*?*
+
+Sitemap: https://pandapushka-shift-schedule-calculator-ac5e.twc1.net/sitemap.xml
+Host: pandapushka-shift-schedule-calculator-ac5e.twc1.net
