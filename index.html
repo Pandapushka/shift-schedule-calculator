@@ -9,12 +9,12 @@
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <meta name="theme-color" content="#f7f8fb">
     <meta name="author" content="Балдежный калькулятор">
-    <link rel="canonical" href="https://pandapushka-shift-schedule-calculator-ac5e.twc1.net/">
+    <link rel="canonical" href="https://grafik-smen-cool.ru/">
     <meta property="og:locale" content="ru_RU">
     <meta property="og:title" content="Калькулятор графика смен онлайн — 2/2, 3/3, 1/3, 5/2">
     <meta property="og:description" content="Рассчитайте сменный график онлайн: рабочие и выходные дни, ночные смены, часы и переработки по выбранной дате начала.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://pandapushka-shift-schedule-calculator-ac5e.twc1.net/">
+    <meta property="og:url" content="https://grafik-smen-cool.ru/">
     <meta property="og:site_name" content="Балдежный калькулятор">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Калькулятор графика смен онлайн">
@@ -31,16 +31,16 @@
             "@graph": [
                 {
                     "@type": "WebSite",
-                    "@id": "https://pandapushka-shift-schedule-calculator-ac5e.twc1.net/#website",
-                    "url": "https://pandapushka-shift-schedule-calculator-ac5e.twc1.net/",
+                    "@id": "https://grafik-smen-cool.ru/#website",
+                    "url": "https://grafik-smen-cool.ru/",
                     "name": "Балдежный калькулятор",
                     "inLanguage": "ru-RU"
                 },
                 {
                     "@type": "WebApplication",
-                    "@id": "https://pandapushka-shift-schedule-calculator-ac5e.twc1.net/#app",
+                    "@id": "https://grafik-smen-cool.ru/#app",
                     "name": "Калькулятор графика смен онлайн",
-                    "url": "https://pandapushka-shift-schedule-calculator-ac5e.twc1.net/",
+                    "url": "https://grafik-smen-cool.ru/",
                     "applicationCategory": "BusinessApplication",
                     "operatingSystem": "Web",
                     "inLanguage": "ru-RU",
@@ -61,7 +61,7 @@
                 },
                 {
                     "@type": "FAQPage",
-                    "@id": "https://pandapushka-shift-schedule-calculator-ac5e.twc1.net/#faq",
+                    "@id": "https://grafik-smen-cool.ru/#faq",
                     "mainEntity": [
                         {
                             "@type": "Question",
@@ -107,13 +107,13 @@
                 },
                 {
                     "@type": "BreadcrumbList",
-                    "@id": "https://pandapushka-shift-schedule-calculator-ac5e.twc1.net/#breadcrumbs",
+                    "@id": "https://grafik-smen-cool.ru/#breadcrumbs",
                     "itemListElement": [
                         {
                             "@type": "ListItem",
                             "position": 1,
                             "name": "Калькулятор графика смен",
-                            "item": "https://pandapushka-shift-schedule-calculator-ac5e.twc1.net/"
+                            "item": "https://grafik-smen-cool.ru/"
                         }
                     ]
                 }
@@ -2794,7 +2794,7 @@
 
     <script>
         const { createApp } = Vue;
-        const API_BASE_URL = 'https://pandapushka-shift-schedule-calculator-ac5e.twc1.net';
+        const API_BASE_URL = 'https://domen-back-end-grafik.tw1.su';
 
         createApp({
             data() {
@@ -2908,6 +2908,9 @@
                 }
             },
             methods: {
+                apiFetch(path, options = {}) {
+                    return fetch(`${API_BASE_URL}${path}`, options);
+                },
                 toggleTheme() {
                     this.theme = this.theme === 'light' ? 'dark' : 'light';
                     localStorage.setItem('shiftcalc_theme', this.theme);
@@ -3014,7 +3017,7 @@
                             requestData.overtimes = [];
                         }
 
-                        const response = await fetch(`${API_BASE_URL}/api/shiftschedule/calculate`, {
+                        const response = await this.apiFetch('/api/shiftschedule/calculate', {
                             method: 'POST',
                             headers,
                             body: JSON.stringify(requestData)
@@ -3046,7 +3049,7 @@
                     this.authMessage = '';
 
                     try {
-                        const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+                        const response = await this.apiFetch('/api/auth/register', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -3076,7 +3079,7 @@
                     this.authMessage = '';
 
                     try {
-                        const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+                        const response = await this.apiFetch('/api/auth/login', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -3130,7 +3133,7 @@
                     }
 
                     try {
-                        const response = await fetch(`${API_BASE_URL}/api/shiftschedule/history`, {
+                        const response = await this.apiFetch('/api/shiftschedule/history', {
                             headers: {
                                 Authorization: `Bearer ${this.authToken}`
                             }
@@ -3155,7 +3158,7 @@
                 },
                 async fetchSupportTickets() {
                     try {
-                        const response = await fetch(`${API_BASE_URL}/api/support/tickets`, {
+                        const response = await this.apiFetch('/api/support/tickets', {
                             headers: this.authToken
                                 ? { Authorization: `Bearer ${this.authToken}` }
                                 : {}
@@ -3194,7 +3197,7 @@
                     this.supportMessage = '';
 
                     try {
-                        const response = await fetch(`${API_BASE_URL}/api/support/tickets`, {
+                        const response = await this.apiFetch('/api/support/tickets', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -3233,7 +3236,7 @@
                     this.supportMessage = '';
 
                     try {
-                        const response = await fetch(`${API_BASE_URL}/api/support/tickets/${ticket.id}/reply`, {
+                        const response = await this.apiFetch(`/api/support/tickets/${ticket.id}/reply`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

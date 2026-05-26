@@ -3,5 +3,5 @@ Allow: /
 Disallow: /api/
 Disallow: /*?*
 
-Sitemap: https://pandapushka-shift-schedule-calculator-ac5e.twc1.net/sitemap.xml
-Host: pandapushka-shift-schedule-calculator-ac5e.twc1.net
+Sitemap: https://grafik-smen-cool.ru/sitemap.xml
+Host: grafik-smen-cool.ru
